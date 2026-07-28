@@ -724,15 +724,17 @@ if (window.speechSynthesis) speechSynthesis.getVoices();
 
 /* --- 自己チェック（?test で実行） --- */
 if (location.search.includes("test")){
+  const FAILS=[]; const ck=(ok,msg)=>{ if(!ok) FAILS.push(msg); };
   const bk = JSON.stringify(P);
   Object.assign(P, {belong:"A大学3年", name:"山田", s1:"巻き込む力", epi:"集客を立て直した", num:"月20人が45人になった", learn:"数字で確かめる", why:"自分が助けられたから", role:"ディレクター"});
-  console.assert(generate("intro").text.includes("A大学3年"), "intro uses profile");
-  console.assert(!generate("intro").text.includes("undefined"), "no undefined");
+  ck(generate("intro").text.includes("A大学3年"), "intro uses profile");
+  ck(!generate("intro").text.includes("undefined"), "no undefined");
   Object.keys(P).forEach(k => delete P[k]);              // 空プロフィール
-  console.assert(generate("weak").gaps.length > 0, "gaps reported when empty");
-  console.assert(esDraft(ES[1], 400).text.length <= 400, "ES respects limit");
+  ck(generate("weak").gaps.length > 0, "gaps reported when empty");
+  ck(esDraft(ES[1], 400).text.length <= 400, "ES respects limit");
   Object.assign(P, JSON.parse(bk));
-  console.log("self-check done");
+  document.body.dataset.selfcheck = FAILS.length ? "FAIL: "+FAILS.join(" | ") : "PASS";
+  console.log("self-check", document.body.dataset.selfcheck);
 }
 </script>
 </body>

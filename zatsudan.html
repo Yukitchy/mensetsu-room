@@ -407,14 +407,16 @@ if(window.speechSynthesis)speechSynthesis.getVoices();
 
 /* --- 自己チェック（?test） --- */
 if(location.search.includes("test")){
+  const FAILS=[]; const ck=(ok,msg)=>{ if(!ok) FAILS.push(msg); };
   S.cur={t:"",kw:["週末"]};
   const a=judge("私も週末は映画を見てます。おすすめありますか？",false);
-  console.assert(a.pickup&&a.self&&a.ask,"good reply detected");
-  console.assert(score(a)>12,"good reply scores high: "+score(a));
+  ck(a.pickup&&a.self&&a.ask,"good reply detected");
+  ck(score(a)>12,"good reply scores high: "+score(a));
   const b=judge("はい。",false);
-  console.assert(!b.pickup&&score(b)<0,"one-word reply penalised: "+score(b));
-  console.assert(score(judge("",true))<-10,"silence penalised");
-  console.log("self-check done");
+  ck(!b.pickup&&score(b)<0,"one-word reply penalised: "+score(b));
+  ck(score(judge("",true))<-10,"silence penalised");
+  document.body.dataset.selfcheck = FAILS.length ? "FAIL: "+FAILS.join(" | ") : "PASS";
+  console.log("self-check", document.body.dataset.selfcheck);
 }
 </script>
 </body>
