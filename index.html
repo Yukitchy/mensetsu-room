@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>面接ルーム — 圧迫面接 & ES対策</title>
+<style>
+:root{
+  --bg:#12161A; --panel:#1B2228; --panel2:#232C33;
+  --ink:#EDF2F4; --sub:#94A6B0; --line:#2E3941;
+  --accent:#D6483F; --ok:#4FB286; --warn:#E0A93B; --info:#5C9CD6;
+  --ease-out:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:radial-gradient(1100px 620px at 50% -10%,#26323A 0%,transparent 62%),var(--bg);
+  color:var(--ink);min-height:100dvh;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;
+  line-height:1.85;-webkit-font-smoothing:antialiased;
+}
+body,p,li,td,th,div,span,b,small,summary,button,a,h1,h2,h3,h4,label{
+  word-break:auto-phrase;line-break:strict;overflow-wrap:anywhere;
+}
+h1,h2,h3,h4,.btn,.chip,.pill,.eyebrow,.meterLabel,.hint,.opt .t{text-wrap:balance}
+p,.subtitle,.gen{text-wrap:pretty}
+.wrap{max-width:900px;margin:0 auto;padding:16px 18px 44px}
+.eyebrow{letter-spacing:.16em;font-size:11px;font-weight:800;color:var(--sub)}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+body[data-lang="ja"] .en{display:none}
+body[data-lang="en"] .ja{display:none}
+
+.btn{border:0;border-radius:999px;padding:12px 24px;font-size:15px;font-weight:800;
+  background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;
+  transition:transform .12s var(--spring),box-shadow .12s ease,background .12s ease;
+  box-shadow:0 6px 18px rgba(214,72,63,.28)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(214,72,63,.34)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.ghost{background:transparent;color:var(--sub);border:1px solid var(--line);box-shadow:none}
+.btn.ghost:hover{color:var(--ink);border-color:var(--sub)}
+.btn.sm{padding:8px 16px;font-size:13px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.hint{font-size:12px;color:var(--sub)}
+input[type=text],textarea,select{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:11px 13px;color:var(--ink);font-size:15px;font-family:inherit;width:100%}
+textarea{resize:vertical;min-height:74px;line-height:1.7}
+label .lb{font-size:12px;font-weight:800;color:var(--sub);display:block;margin-bottom:5px}
+
+/* ヘッダ / タブ */
+header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0 16px}
+.logo{font-weight:900;font-size:17px;letter-spacing:.02em}
+.logo span{color:var(--accent)}
+.langsw{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.langsw button{background:transparent;border:0;color:var(--sub);font:800 12px/1 inherit;padding:8px 13px;cursor:pointer}
+.langsw button[aria-pressed="true"]{background:var(--panel2);color:var(--ink)}
+nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+nav.tabs button{background:var(--panel);border:1px solid var(--line);border-radius:999px;color:var(--sub);
+  font:800 13px/1.4 inherit;padding:9px 16px;cursor:pointer;transition:all .15s var(--ease-out)}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-pressed="true"]{background:var(--ink);color:#12161A;border-color:var(--ink)}
+.view{display:none;flex-direction:column;gap:18px}
+.view.on{display:flex}
+
+/* スタート */
+.title{font-size:clamp(28px,6.6vw,44px);line-height:1.25;font-weight:900}
+.title b{color:var(--accent)}
+.lead{color:var(--sub);max-width:62ch}
+.group{display:flex;flex-direction:column;gap:9px}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 12px;
+  cursor:pointer;text-align:left;color:var(--ink);font-family:inherit;
+  transition:transform .16s var(--ease-out),border-color .16s ease,background .16s ease}
+.opt:hover{transform:translateY(-3px);border-color:var(--sub)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--panel))}
+.opt .t{font-weight:800;font-size:15px}
+.opt .d{font-size:12px;color:var(--sub);line-height:1.6;margin-top:3px}
+
+/* 面接ルーム */
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;
+  padding:5px 13px;font-size:12px;font-weight:700;color:var(--sub);white-space:nowrap}
+.meterBox{flex:1;min-width:190px}
+.meterLabel{display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.08em}
+.meterTrack{height:10px;background:#0C1013;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.meterFill{height:100%;width:100%;background:var(--ok);border-radius:999px;transition:width .5s var(--ease-out),background .5s ease}
+.stage{position:relative;display:grid;place-items:center}
+.stage::before{content:"";position:absolute;top:6%;width:min(420px,80vw);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.075),transparent 70%);filter:blur(4px)}
+.desk{position:absolute;bottom:0;width:min(660px,102%);height:52px;border-radius:14px 14px 0 0;
+  background:linear-gradient(#2C373F,#1A2127);border:1px solid var(--line);border-bottom:0}
+svg.face{position:relative;width:min(320px,70vw);display:block;
+  filter:drop-shadow(0 22px 40px rgba(0,0,0,.5));animation:enter .8s var(--ease-out) both}
+@keyframes enter{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+.brow,.mouth,.eyelid{transition:transform .45s var(--ease-out),d .45s var(--ease-out),opacity .3s ease}
+.face.talking .mouth{animation:talk .34s ease-in-out infinite alternate;transform-origin:center}
+@keyframes talk{from{transform:scaleY(.45)}to{transform:scaleY(1.25)}}
+.subtitle{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:12px;padding:14px 16px;font-size:clamp(16px,3.9vw,20px);font-weight:700;min-height:70px}
+.subtitle .tr{display:block;font-size:13px;font-weight:600;color:var(--sub);margin-top:6px;line-height:1.6}
+.you{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 15px;
+  font-size:15px;color:var(--sub);min-height:56px}
+.you b{color:var(--ink);font-weight:600}
+.controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.mic{width:11px;height:11px;border-radius:50%;background:#4a5860;flex:none}
+.mic.live{background:var(--accent);box-shadow:0 0 0 6px rgba(214,72,63,.16)}
+.flash{animation:flash .5s var(--ease-out)}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(214,72,63,.55)}100%{box-shadow:0 0 0 26px rgba(214,72,63,0)}}
+.dummy{background:color-mix(in srgb,var(--info) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--info) 40%,var(--line));
+  border-radius:12px;padding:13px 16px;font-size:15px;display:none}
+.dummy.on{display:block}
+.dummy .h{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--info);margin-bottom:6px}
+
+/* 結果 */
+.verdict{font-size:clamp(26px,6.4vw,40px);font-weight:900;line-height:1.3}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar .lab{display:flex;justify-content:space-between;font-size:13px;font-weight:700;gap:10px}
+.bar .tr{height:8px;background:#0C1013;border-radius:999px;overflow:hidden;border:1px solid var(--line);margin-top:5px}
+.bar .fl{height:100%;border-radius:999px}
+.log{display:flex;flex-direction:column;gap:13px;max-height:340px;overflow-y:auto}
+.log .q{font-weight:800}.log .a{color:var(--sub);font-size:14px}.log .n{font-size:12px;color:var(--warn)}
+
+/* プロフィール / 生成 */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form label{display:block}
+.form .full{grid-column:1/-1}
+.gen{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:16px;
+  font-size:15.5px;line-height:1.95;white-space:pre-wrap;min-height:80px}
+.gaps{font-size:13px;color:var(--warn);display:flex;flex-direction:column;gap:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.count{font-size:12px;font-weight:800;color:var(--sub)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 14px;
+  font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit;transition:all .15s var(--ease-out)}
+.chip:hover{color:var(--ink);border-color:var(--sub)}
+.chip[aria-pressed="true"]{background:color-mix(in srgb,var(--info) 18%,var(--panel));border-color:var(--info);color:var(--ink)}
+@media(max-width:640px){.opts,.form{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-lang="ja">
+<div class="wrap">
+
+<header>
+  <div class="logo">面接<span>ルーム</span></div>
+  <div class="langsw">
+    <button data-lang="ja" aria-pressed="true">日本語</button>
+    <button data-lang="en" aria-pressed="false">English</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-view="vInterview" aria-pressed="true"><span class="ja">面接ルーム</span><span class="en">Interview</span></button>
+  <button data-view="vDummy"><span class="ja">AIダミー（模範解答）</span><span class="en">AI Stand-in</span></button>
+  <button data-view="vEs"><span class="ja">ES作成</span><span class="en">Application Essay</span></button>
+  <button data-view="vProfile"><span class="ja">プロフィール</span><span class="en">My Profile</span></button>
+</nav>
+
+<!-- ============ 面接 ============ -->
+<section class="view on" id="vInterview">
+  <div id="setup" style="display:flex;flex-direction:column;gap:20px">
+    <div>
+      <p class="eyebrow">MOCK INTERVIEW ROOM</p>
+      <h1 class="title"><span class="ja">目の前の面接官を、<br><b>納得させろ。</b></span><span class="en">Convince the<br><b>interviewer in front of you.</b></span></h1>
+      <p class="lead" style="margin-top:10px">
+        <span class="ja">質問は声で飛んでくる。答えるのも声。詰まる・短い・具体性がない——そのたびに心証メーターが削られ、ゼロになったらその場で打ち切りです。</span>
+        <span class="en">Questions come by voice. You answer by voice. Freezing, short answers, or vague ones drain the interviewer's impression meter — hit zero and the interview is cut off on the spot.</span>
+      </p>
+    </div>
+
+    <div class="group">
+      <p class="eyebrow"><span class="ja">難易度</span><span class="en">DIFFICULTY</span></p>
+      <div class="opts" id="optLevel">
+        <button class="opt" data-v="1"><span class="t"><span class="ja">ゆるい</span><span class="en">Gentle</span></span>
+          <div class="d"><span class="ja">相槌を打ってくれる優しい面接官。追撃はほぼ無し</span><span class="en">A kind interviewer who nods along. Almost no follow-up pressure.</span></div></button>
+        <button class="opt" data-v="2" aria-pressed="true"><span class="t"><span class="ja">ふつう</span><span class="en">Normal</span></span>
+          <div class="d"><span class="ja">一般的な面接。弱い回答は普通に突っ込まれる</span><span class="en">A standard interview. Weak answers get challenged.</span></div></button>
+        <button class="opt" data-v="3"><span class="t"><span class="ja">圧迫</span><span class="en">Stress</span></span>
+          <div class="d"><span class="ja">否定から入る。沈黙も短さも全部減点される</span><span class="en">Starts from doubt. Silence and short answers all cost you.</span></div></button>
+      </div>
+    </div>
+
+    <div class="group">
+      <p class="eyebrow"><span class="ja">面接の段階</span><span class="en">ROUND</span></p>
+      <div class="opts" id="optStage">
+        <button class="opt" data-v="1" aria-pressed="true"><span class="t"><span class="ja">一次 / 人事</span><span class="en">1st / HR</span></span>
+          <div class="d"><span class="ja">基礎確認。自己紹介・志望動機・人柄</span><span class="en">Basics: self-intro, motivation, personality.</span></div></button>
+        <button class="opt" data-v="2"><span class="t"><span class="ja">二次 / 現場責任者</span><span class="en">2nd / Manager</span></span>
+          <div class="d"><span class="ja">実務の深掘り。数字と再現性を問われる</span><span class="en">Deep dive on your work. Numbers and repeatability.</span></div></button>
+        <button class="opt" data-v="3"><span class="t"><span class="ja">最終 / 社長</span><span class="en">Final / CEO</span></span>
+          <div class="d"><span class="ja">価値観と覚悟。答えのない問いが飛ぶ</span><span class="en">Values and resolve. Questions with no right answer.</span></div></button>
+      </div>
+    </div>
+
+    <div>
+      <button class="btn" id="start"><span class="ja">面接を始める</span><span class="en">Start the interview</span></button>
+      <p class="hint" style="margin-top:10px">
+        <span class="ja">マイクを使います。Chrome推奨（非対応ブラウザでは自動でキーボード入力に切り替わります）。音声は端末内で処理され、どこにも保存されません。</span>
+        <span class="en">Uses your microphone. Chrome recommended — on other browsers it falls back to typing. Nothing you say is stored anywhere.</span>
+      </p>
+    </div>
+  </div>
+
+  <div id="room" style="display:none;flex-direction:column;gap:13px">
+    <div class="topbar">
+      <span class="pill" id="pillStage">—</span>
+      <span class="pill" id="pillQ">Q1 / 5</span>
+      <div class="meterBox">
+        <div class="meterLabel"><span><span class="ja">面接官の心証</span><span class="en">IMPRESSION</span></span><span class="num" id="meterNum">100</span></div>
+        <div class="meterTrack"><div class="meterFill" id="meterFill"></div></div>
+      </div>
+    </div>
+
+    <div class="stage" id="stageEl">
+      <div class="desk"></div>
+      <svg class="face" id="face" viewBox="0 0 300 300" aria-label="面接官">
+        <path d="M150 196c-46 0-84 27-95 66h190c-11-39-49-66-95-66z" fill="#2B3942"/>
+        <path d="M150 196l-22 10 22 30 22-30-22-10z" fill="#F2F4F5"/>
+        <path id="tie" d="M150 216l-9 14 9 42 9-42-9-14z" fill="#C23B33"/>
+        <rect x="134" y="176" width="32" height="30" rx="12" fill="#E4B996"/>
+        <ellipse cx="150" cy="126" rx="62" ry="70" fill="#F0C9A4"/>
+        <path id="hair" d="M88 118c0-40 27-64 62-64s62 24 62 64c0-14-10-22-24-25-16-4-24-9-38-9s-24 5-38 9c-14 3-24 11-24 25z" fill="#20282D"/>
+        <ellipse cx="88" cy="130" rx="8" ry="12" fill="#E4B996"/>
+        <ellipse cx="212" cy="130" rx="8" ry="12" fill="#E4B996"/>
+        <g class="brow" id="browL"><rect x="105" y="104" width="34" height="7" rx="3.5" fill="#20282D"/></g>
+        <g class="brow" id="browR"><rect x="161" y="104" width="34" height="7" rx="3.5" fill="#20282D"/></g>
+        <ellipse cx="122" cy="128" rx="9" ry="10.5" fill="#fff"/>
+        <ellipse cx="178" cy="128" rx="9" ry="10.5" fill="#fff"/>
+        <circle cx="122" cy="129" r="5.2" fill="#1B2226"/>
+        <circle cx="178" cy="129" r="5.2" fill="#1B2226"/>
+        <rect class="eyelid" id="lidL" x="112" y="112" width="20" height="0" fill="#F0C9A4"/>
+        <rect class="eyelid" id="lidR" x="168" y="112" width="20" height="0" fill="#F0C9A4"/>
+        <g id="glasses" opacity="0" stroke="#39464E" stroke-width="3" fill="none">
+          <circle cx="122" cy="128" r="18"/><circle cx="178" cy="128" r="18"/>
+          <path d="M140 128h20M104 126l-14-4M196 126l14-4"/>
+        </g>
+        <path d="M150 132v14c0 4-3 6-7 7" stroke="#D9A87F" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        <path class="mouth" id="mouth" d="M130 170q20 8 40 0" stroke="#8C4A3F" stroke-width="4.6" fill="none" stroke-linecap="round"/>
+        <ellipse id="cheekL" cx="112" cy="152" rx="10" ry="6" fill="#EB9B8A" opacity="0"/>
+        <ellipse id="cheekR" cx="188" cy="152" rx="10" ry="6" fill="#EB9B8A" opacity="0"/>
+      </svg>
+    </div>
+
+    <div class="subtitle" id="qText">…</div>
+    <div class="you" id="aText"></div>
+    <div class="dummy" id="dummyBox"><div class="h">AI DUMMY — <span class="ja">あなたの情報だけで作った答え</span><span class="en">built only from your profile</span></div><div id="dummyText"></div></div>
+
+    <div class="controls">
+      <span class="mic" id="micDot"></span>
+      <span class="hint" id="statusText">—</span>
+      <span style="flex:1"></span>
+      <button class="btn ghost sm" id="helpMe"><span class="ja">ダミーに答えてもらう</span><span class="en">Let the stand-in answer</span></button>
+      <button class="btn ghost sm" id="skip"><span class="ja">飛ばす</span><span class="en">Skip</span></button>
+      <button class="btn sm" id="done"><span class="ja">回答おわり</span><span class="en">Done answering</span></button>
+    </div>
+    <div id="typeBox" style="display:none"><textarea id="typeIn" placeholder="ここに回答を入力して「回答おわり」／ Type your answer here"></textarea></div>
+  </div>
+
+  <div id="result" style="display:none;flex-direction:column;gap:16px">
+    <p class="eyebrow">RESULT</p>
+    <h2 class="verdict" id="verdict">—</h2>
+    <p class="lead" id="verdictNote"></p>
+    <div class="card bars" id="bars"></div>
+    <div class="card">
+      <p class="eyebrow" style="margin-bottom:10px"><span class="ja">やりとりの記録</span><span class="en">TRANSCRIPT</span></p>
+      <div class="log" id="logBox"></div>
+    </div>
+    <div><button class="btn" id="again"><span class="ja">もう一度</span><span class="en">Try again</span></button></div>
+  </div>
+</section>
+
+<!-- ============ AIダミー ============ -->
+<section class="view" id="vDummy">
+  <div>
+    <p class="eyebrow">AI STAND-IN</p>
+    <h1 class="title"><span class="ja">答え方が分からない時は、<br><b>代わりに喋らせる。</b></span><span class="en">Stuck on how to answer?<br><b>Let it speak for you.</b></span></h1>
+    <p class="lead" style="margin-top:10px">
+      <span class="ja">プロフィールに入れたあなた自身の事実だけを組み立てて、面接官が知りたい順に並べ替えます。書いていないことは一切足しません（＝嘘になりません）。足りない材料はその場で指摘します。</span>
+      <span class="en">It assembles only the facts you entered in your profile, reordered the way an interviewer wants to hear them. It never adds anything you did not write — so nothing becomes a lie. Missing material is pointed out instead.</span>
+    </p>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:14px">
+    <label><span class="lb"><span class="ja">質問を選ぶ</span><span class="en">Pick a question</span></span>
+      <select id="dqSel"></select></label>
+    <div class="row">
+      <button class="btn sm" id="dqGen"><span class="ja">答えを作る</span><span class="en">Build the answer</span></button>
+      <button class="btn ghost sm" id="dqSpeak"><span class="ja">読み上げる</span><span class="en">Read aloud</span></button>
+      <button class="btn ghost sm" id="dqCopy"><span class="ja">コピー</span><span class="en">Copy</span></button>
+      <span class="count" id="dqCount"></span>
+    </div>
+    <div class="gen" id="dqOut"></div>
+    <div class="gaps" id="dqGaps"></div>
+  </div>
+</section>
+
+<!-- ============ ES ============ -->
+<section class="view" id="vEs">
+  <div>
+    <p class="eyebrow">APPLICATION ESSAY</p>
+    <h1 class="title"><span class="ja">ESは、<b>設問ごとに型がある。</b></span><span class="en">Every essay prompt<br><b>has its own shape.</b></span></h1>
+    <p class="lead" style="margin-top:10px">
+      <span class="ja">定番の設問を選ぶと、骨子（何をどの順で書くか）と、あなたの情報で埋めた下書きが出ます。文字数に合わせて伸縮します。そのままコピーして推敲してください。</span>
+      <span class="en">Pick a standard prompt and you get the outline (what to write, in what order) plus a draft filled with your own material, stretched or trimmed to the character limit. Copy it and polish.</span>
+    </p>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:14px">
+    <div class="group"><span class="lb"><span class="ja">設問</span><span class="en">Prompt</span></span>
+      <div class="chips" id="esChips"></div></div>
+    <div class="row">
+      <label style="flex:1;min-width:150px"><span class="lb"><span class="ja">文字数</span><span class="en">Character limit</span></span>
+        <select id="esLen"><option value="200">200字</option><option value="400" selected>400字</option><option value="600">600字</option><option value="800">800字</option></select></label>
+      <button class="btn sm" id="esGen" style="align-self:flex-end"><span class="ja">下書きを作る</span><span class="en">Draft it</span></button>
+      <button class="btn ghost sm" id="esCopy" style="align-self:flex-end"><span class="ja">コピー</span><span class="en">Copy</span></button>
+      <span class="count" id="esCount" style="align-self:flex-end"></span>
+    </div>
+    <div class="card" style="background:var(--panel2)"><p class="eyebrow" style="margin-bottom:8px"><span class="ja">骨子</span><span class="en">OUTLINE</span></p><div id="esOutline" class="hint" style="font-size:13.5px"></div></div>
+    <div class="gen" id="esOut"></div>
+    <div class="gaps" id="esGaps"></div>
+  </div>
+</section>
+
+<!-- ============ プロフィール ============ -->
+<section class="view" id="vProfile">
+  <div>
+    <p class="eyebrow">MY PROFILE</p>
+    <h1 class="title"><span class="ja">材料を、<b>先に置いておく。</b></span><span class="en">Put your material<br><b>in place first.</b></span></h1>
+    <p class="lead" style="margin-top:10px">
+      <span class="ja">ここに入れた内容だけがAIダミーとESに使われます。埋めるほど答えが厚くなります。この端末のブラウザにだけ保存され、送信はされません。</span>
+      <span class="en">Only what you enter here is used by the stand-in and the essay drafts. The more you fill in, the richer the answers. Saved in this browser only — nothing is sent anywhere.</span>
+    </p>
+  </div>
+  <div class="card">
+    <div class="form" id="pForm"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn sm" id="pSave"><span class="ja">保存する</span><span class="en">Save</span></button>
+      <span class="hint" id="pSaved"></span>
+    </div>
+  </div>
+</section>
+
+</div>
+<script>
+"use strict";
+/* ===================== プロフィール項目 ===================== */
+const FIELDS = [
+  {k:"name",  ja:"名前（呼ばれ方）", en:"Name", ph:"山田 / Nguyen", half:1},
+  {k:"belong",ja:"所属・経歴", en:"Affiliation / background", ph:"〇〇大学 経済学部3年 ／ 営業3年", half:1},
+  {k:"role",  ja:"志望職種", en:"Target role", ph:"Webディレクター", half:1},
+  {k:"lang",  ja:"日本語レベル（外国籍の方）", en:"Japanese level (non-native)", ph:"N2・会議は問題なし", half:1},
+  {k:"s1",    ja:"強み①", en:"Strength 1", ph:"人を巻き込む力", half:1},
+  {k:"s2",    ja:"強み②", en:"Strength 2", ph:"数字で改善する力", half:1},
+  {k:"epi",   ja:"一番語れる経験（何をしたか）", en:"Your strongest experience (what you did)", ph:"サークルの集客が落ちていたので、SNS運用を引き受けて週3投稿に変えた", area:1},
+  {k:"num",   ja:"その結果（数字で）", en:"The result (in numbers)", ph:"来場が月20人→45人に増えた", area:1},
+  {k:"learn", ja:"そこから学んだこと", en:"What you learned", ph:"仮説を数字で確かめてから動くと早い", area:1},
+  {k:"fail",  ja:"うまくいかなかった経験と、その後", en:"A failure, and what you did after", ph:"最初の1ヶ月は自己流でやって反応ゼロ。分析してから作り直した", area:1},
+  {k:"why",   ja:"その業界・会社を志望する理由（きっかけ）", en:"Why this industry / company", ph:"自分が使って助かったサービスだから", area:1},
+  {k:"future",ja:"入社後にやりたいこと", en:"What you want to do after joining", ph:"まず現場を覚えて、3年で企画を任される人になる", area:1},
+  {k:"weak",  ja:"苦手なこと／短所", en:"Weakness", ph:"抱え込みがち", half:1},
+  {k:"weakfix",ja:"その短所への対処", en:"How you handle it", ph:"週1で進捗を共有する習慣にした", half:1},
+  {k:"motto", ja:"仕事で譲れないこと", en:"What you will not compromise on", ph:"約束した期日は守る", half:1},
+  {k:"home",  ja:"出身・持ち込める視点（任意）", en:"Where you're from / perspective you bring (optional)", ph:"ベトナム出身。日本と現地の橋渡しができる", half:1}
+];
+const P = {};
+function loadProfile(){ try{ Object.assign(P, JSON.parse(localStorage.getItem("mensetsu_profile")||"{}")); }catch(e){} }
+function saveProfile(){ localStorage.setItem("mensetsu_profile", JSON.stringify(P)); }
+function has(k){ return !!(P[k] && P[k].trim()); }
+function v(k){ return (P[k]||"").trim().replace(/[。.]\s*$/,""); }
+
+/* ===================== 質問データ ===================== */
+const STAGES = {
+  1:{ja:"一次面接",en:"1st round",who:{ja:"人事担当",en:"HR"},tie:"#3B6FA8",hair:"#2A3238",glasses:0,pitch:1.0,base:100},
+  2:{ja:"二次面接",en:"2nd round",who:{ja:"現場責任者",en:"Hiring manager"},tie:"#4A7A5C",hair:"#20282D",glasses:1,pitch:.92,base:95},
+  3:{ja:"最終面接",en:"Final round",who:{ja:"社長",en:"CEO"},tie:"#8A2F2A",hair:"#5A6068",glasses:1,pitch:.82,base:90}
+};
+const Q = {
+ 1:[{c:"intro",  ja:"では、自己紹介を1分程度でお願いします。", en:"Please introduce yourself in about a minute."},
+    {c:"motive", ja:"当社を志望した理由を教えてください。", en:"Why did you apply to our company?"},
+    {c:"strength",ja:"あなたの強みと、それを裏付けるエピソードを教えてください。", en:"What is your strength, and what backs it up?"},
+    {c:"weak",   ja:"ご自身の短所は何だと思いますか。", en:"What would you say your weakness is?"},
+    {c:"quit",   ja:"学生時代に力を入れたことを教えてください。", en:"What did you put the most effort into as a student?"},
+    {c:"team",   ja:"チームで意見が対立したとき、どう振る舞いましたか。", en:"When your team disagreed, how did you act?"},
+    {c:"other",  ja:"他社の選考状況を教えてください。当社は第一志望ですか。", en:"How are your other applications going? Are we your first choice?"}],
+ 2:[{c:"result", ja:"直近で一番成果を出した仕事を、数字を交えて説明してください。", en:"Describe your biggest recent result, with numbers."},
+    {c:"repeat", ja:"その成果は、あなたがいなくても出ていたのでは？", en:"Wouldn't that result have happened without you?"},
+    {c:"fail",   ja:"うまくいかなかった案件について聞かせてください。原因はどこにありましたか。", en:"Tell me about something that failed. What caused it?"},
+    {c:"prio",   ja:"限られた時間で優先順位をつける基準は何ですか。", en:"How do you decide priorities when time is short?"},
+    {c:"plan",   ja:"現場に入って最初の3ヶ月で、何をしますか。", en:"What would you do in your first three months here?"},
+    {c:"boss",   ja:"年下の上司の指示に納得できない時、どうしますか。", en:"What if you disagree with a younger manager's instruction?"},
+    {c:"value",  ja:"あなたを採用すると、当社の何がどう変わりますか。", en:"If we hire you, what changes for us?"}],
+ 3:[{c:"motto",  ja:"あなたが仕事で絶対に譲れないものは何ですか。", en:"What will you never compromise on at work?"},
+    {c:"future", ja:"10年後、どうなっていたいですか。それは当社で叶いますか。", en:"Where do you want to be in ten years? Can we get you there?"},
+    {c:"fail",   ja:"これまでの人生で、一番の失敗は何でしたか。", en:"What has been your biggest failure?"},
+    {c:"choice", ja:"お金と裁量、どちらか一つしか手に入らないなら、どちらを選びますか。", en:"Money or autonomy — if you could only have one, which?"},
+    {c:"critic", ja:"うちの会社の弱点は何だと思いますか。遠慮なくどうぞ。", en:"What do you think our weakness is? Be blunt."},
+    {c:"crisis", ja:"経営が傾いた時、あなたは残りますか。辞めますか。", en:"If the company were in trouble, would you stay or leave?"},
+    {c:"sell",   ja:"最後に、私を説得してください。なぜあなたを採るべきですか。", en:"Finally — convince me. Why should we hire you?"}]
+};
+const JAB = {
+  short:["それだけですか。もう少し中身をお願いします。","……以上ですか？ それで伝わると思いますか。","短いですね。準備、してきました？"],
+  silence:["黙られると、評価のしようがないんですが。","……時間、限られてるんですけどね。","答えられない、ということでいいですか。"],
+  filler:["いま、自信がなさそうに聞こえましたが。","『たぶん』ということは、確証はないんですね。","言い切れないんですか。"],
+  vague:["具体的な数字は出せますか。","それ、誰でも言えますよね。何がどれだけ変わったんですか。","抽象的ですね。実例を一つ。"],
+  push:["それ、さっきの話と矛盾していませんか。","で、結論は。","うーん……弱いですね。他には。"]
+};
+const SOFT=["なるほど、ありがとうございます。","はい、よくわかりました。","いいですね。ではもう少しだけ。"];
+const FILLER_RE=/(えー|えっと|あのー|あの、|まあ|なんか|たぶん|ちょっと|みたいな|かなと)/g;
+const CONCRETE_RE=/([0-9０-９]+|%|％|円|名|件|倍|割|人)/g;
+
+/* ===================== ダミー生成エンジン ===================== */
+/* 使うのは P に入っている事実だけ。無い項目は文ごと落とす（＝嘘を作らない）。 */
+function build(parts){
+  const used = parts.filter(p => p.t).map(p => p.t);
+  const gaps = parts.filter(p => !p.t && p.need).map(p => p.need);
+  return {text: used.join(""), gaps};
+}
+const G = {
+  intro: () => build([
+    {t: has("belong") ? `${v("belong")}の${v("name")||"わたし"}と申します。` : null, need:"belong"},
+    {t: has("s1") ? `強みは${v("s1")}${has("s2")?`と${v("s2")}`:""}です。` : null, need:"s1"},
+    {t: has("epi") ? `${v("epi")}という経験があり、` : null, need:"epi"},
+    {t: has("num") ? `結果として${v("num")}という形になりました。` : null, need:"num"},
+    {t: has("role") ? `本日は${v("role")}として応募しています。よろしくお願いいたします。` : "よろしくお願いいたします。"}
+  ]),
+  motive: () => build([
+    {t: has("why") ? `${v("why")}、というのが最初のきっかけです。` : null, need:"why"},
+    {t: has("epi") ? `${v("epi")}という経験を通して、この仕事に必要なことが少し分かってきました。` : null, need:"epi"},
+    {t: has("role") ? `その延長線上に${v("role")}という仕事があると考えています。` : null, need:"role"},
+    {t: has("future") ? `入社後は${v("future")}と考えています。` : null, need:"future"}
+  ]),
+  strength: () => build([
+    {t: has("s1") ? `強みは${v("s1")}です。` : null, need:"s1"},
+    {t: has("epi") ? `具体的には、${v("epi")}。` : null, need:"epi"},
+    {t: has("num") ? `その結果、${v("num")}。` : null, need:"num"},
+    {t: has("learn") ? `この経験から、${v("learn")}ということを学びました。` : null, need:"learn"},
+    {t: has("role") ? `${v("role")}の仕事でも、同じやり方で貢献できると考えています。` : null}
+  ]),
+  weak: () => build([
+    {t: has("weak") ? `短所は${v("weak")}ところです。` : null, need:"weak"},
+    {t: has("fail") ? `実際に、${v("fail")}という失敗もしました。` : null, need:"fail"},
+    {t: has("weakfix") ? `そこからは${v("weakfix")}ようにしていて、いまは同じ失敗は起きていません。` : null, need:"weakfix"}
+  ]),
+  quit: () => build([
+    {t: has("epi") ? `${v("epi")}ということに力を入れていました。` : null, need:"epi"},
+    {t: has("fail") ? `最初からうまくいったわけではなく、${v("fail")}。` : null, need:"fail"},
+    {t: has("num") ? `最終的には${v("num")}ところまで持っていけました。` : null, need:"num"},
+    {t: has("learn") ? `${v("learn")}というのが、そこで得たものです。` : null, need:"learn"}
+  ]),
+  team: () => build([
+    {t: has("epi") ? `${v("epi")}という場面で、進め方について意見が割れたことがあります。` : null, need:"epi"},
+    {t: `まず相手が何を心配しているのかを先に聞いて、目的に立ち返って判断しました。`},
+    {t: has("num") ? `結果は${v("num")}という形で出ています。` : null, need:"num"},
+    {t: has("learn") ? `${v("learn")}と考えています。` : null, need:"learn"}
+  ]),
+  other: () => build([
+    {t: has("role") ? `${v("role")}に絞って、同じ領域で数社受けています。` : `同じ領域で数社受けています。`},
+    {t: has("why") ? `その中で御社が第一志望です。${v("why")}という理由が、他社にはないからです。` : null, need:"why"},
+    {t: `選考状況は正直にお伝えしますので、必要でしたらいつでもお聞きください。`}
+  ]),
+  result: () => build([
+    {t: has("epi") ? `${v("epi")}という取り組みです。` : null, need:"epi"},
+    {t: has("num") ? `数字では、${v("num")}という結果になりました。` : null, need:"num"},
+    {t: has("learn") ? `再現できる部分は、${v("learn")}という点だと思っています。` : null, need:"learn"}
+  ]),
+  repeat: () => build([
+    {t: has("epi") ? `その中で私が担ったのは、${v("epi")}という部分です。` : null, need:"epi"},
+    {t: `誰かがやれば出た成果か、と言われると、やる人がいなかったのが事実です。`},
+    {t: has("num") ? `動かした前後で${v("num")}という差が出ています。` : null, need:"num"},
+    {t: has("learn") ? `${v("learn")}という判断が効いたと考えています。` : null, need:"learn"}
+  ]),
+  fail: () => build([
+    {t: has("fail") ? `${v("fail")}というのが、一番の失敗です。` : null, need:"fail"},
+    {t: has("weak") ? `原因は、私の${v("weak")}ところにありました。` : null, need:"weak"},
+    {t: has("weakfix") ? `いまは${v("weakfix")}ようにしています。` : null, need:"weakfix"},
+    {t: has("learn") ? `${v("learn")}というのが、そこで得た教訓です。` : null, need:"learn"}
+  ]),
+  prio: () => build([
+    {t: has("motto") ? `判断の軸は、${v("motto")}という一点です。` : null, need:"motto"},
+    {t: `そのうえで、後から取り返せないものから先に手をつけます。`},
+    {t: has("epi") ? `${v("epi")}という場面でも、同じ順番で決めました。` : null, need:"epi"}
+  ]),
+  plan: () => build([
+    {t: has("future") ? `まずは${v("future")}という方向で考えています。` : null, need:"future"},
+    {t: `最初の1ヶ月は覚えることと、既にうまくいっている型を壊さないことに使います。`},
+    {t: has("s1") ? `2ヶ月目以降は、強みである${v("s1")}を活かせる箇所を探して、小さく試したいです。` : null, need:"s1"}
+  ]),
+  boss: () => build([
+    {t: `年齢は関係なく、まず意図を確認します。`},
+    {t: has("motto") ? `そのうえで${v("motto")}という点に反する場合だけ、事実と代案を持って一度だけ相談します。` : null, need:"motto"},
+    {t: `決まったあとは、決まった通りにやり切ります。`}
+  ]),
+  value: () => build([
+    {t: has("s1") ? `${v("s1")}という強みを、` : null, need:"s1"},
+    {t: has("role") ? `${v("role")}の現場に持ち込めます。` : `現場に持ち込めます。`},
+    {t: has("num") ? `前職・前の活動では${v("num")}という変化を作りました。` : null, need:"num"},
+    {t: has("home") ? `加えて、${v("home")}という視点も出せます。` : null}
+  ]),
+  motto: () => build([
+    {t: has("motto") ? `${v("motto")}、という点です。` : null, need:"motto"},
+    {t: has("fail") ? `これは、${v("fail")}という経験から来ています。` : null, need:"fail"},
+    {t: has("learn") ? `${v("learn")}ということを、身をもって知ったからです。` : null, need:"learn"}
+  ]),
+  future: () => build([
+    {t: has("future") ? `${v("future")}というのが、まず描いている姿です。` : null, need:"future"},
+    {t: has("role") ? `10年後は、${v("role")}として判断を任される側になっていたいです。` : null, need:"role"},
+    {t: has("why") ? `御社を選んでいるのは、${v("why")}からです。ここでなら近づけると考えています。` : null, need:"why"}
+  ]),
+  choice: () => build([
+    {t: has("motto") ? `裁量を選びます。${v("motto")}という点を自分で守れる状態でないと、結局いい仕事にならないからです。` : `裁量を選びます。自分で決められないと、結局いい仕事にならないからです。`},
+    {t: has("epi") ? `${v("epi")}という経験でも、任されたから最後までやり切れました。` : null, need:"epi"}
+  ]),
+  critic: () => build([
+    {t: `外から見える範囲でしか申し上げられませんが、と前置きさせてください。`},
+    {t: has("why") ? `${v("why")}という点が魅力である一方、それが伝わる場所が限られているように見えました。` : null, need:"why"},
+    {t: has("s1") ? `そこは私の${v("s1")}という強みで手伝える部分だと思っています。` : null, need:"s1"}
+  ]),
+  crisis: () => build([
+    {t: has("motto") ? `${v("motto")}という約束をした相手がいる限り、まずは残って手を動かします。` : `まずは残って手を動かします。`},
+    {t: has("fail") ? `${v("fail")}という経験があり、崩れていく途中で何ができるかは少し分かっているつもりです。` : null, need:"fail"},
+    {t: `そのうえで、自分がいない方が良い局面なら、それも言える人間でいたいです。`}
+  ]),
+  sell: () => build([
+    {t: has("s1") ? `理由は3つあります。1つ目は${v("s1")}という強みです。` : null, need:"s1"},
+    {t: has("num") ? `2つ目は実績で、${v("num")}という結果を出しています。` : null, need:"num"},
+    {t: has("why") ? `3つ目は動機です。${v("why")}という点は、他社では代わりになりません。` : null, need:"why"},
+    {t: has("future") ? `入社後は${v("future")}という形で返します。よろしくお願いいたします。` : `よろしくお願いいたします。`}
+  ])
+};
+function generate(cat){
+  const f = G[cat] || G.strength;
+  const r = f();
+  if (!r.text) r.text = L()==="en" ? "(Your profile is empty. Fill it in on the My Profile tab.)"
+                                   : "（プロフィールが空です。「プロフィール」タブに材料を入れてください。）";
+  return r;
+}
+const FLABEL = Object.fromEntries(FIELDS.map(f => [f.k, f]));
+function gapHtml(gaps){
+  const uniq = [...new Set(gaps)];
+  if (!uniq.length) return "";
+  const lang = document.body.dataset.lang;
+  const head = lang === "en" ? "Fill these in to make the answer stronger:" : "ここを埋めると答えが厚くなります：";
+  return `<div>${head}</div>` + uniq.map(k => `<div>・${FLABEL[k] ? FLABEL[k][lang] : k}</div>`).join("");
+}
+
+/* ===================== ES ===================== */
+const ES = [
+  {k:"gakuchika", ja:"学生時代に力を入れたこと（ガクチカ）", en:"Your biggest effort as a student",
+   cats:["quit"], outline:{ja:"結論（何に力を入れたか）→ 状況と課題 → 自分がとった行動 → 数字の結果 → 学びと再現性",en:"Conclusion → situation & problem → your action → result in numbers → what you learned"}},
+  {k:"pr", ja:"自己PR", en:"Self-PR", cats:["strength"],
+   outline:{ja:"強みの結論 → 裏付けエピソード → 数字 → 学び → 入社後にどう使うか",en:"Your strength → the story behind it → numbers → learning → how you'll apply it"}},
+  {k:"motive", ja:"志望動機", en:"Why this company", cats:["motive"],
+   outline:{ja:"きっかけ → 自分の経験との接続 → なぜ他社でなくここか → 入社後にやること",en:"The trigger → link to your experience → why here, not elsewhere → what you'll do"}},
+  {k:"fail", ja:"挫折経験", en:"A setback you faced", cats:["fail"],
+   outline:{ja:"何が起きたか → 原因の自己分析 → やり直した行動 → その後の変化",en:"What happened → your own cause analysis → what you redid → what changed"}},
+  {k:"future", ja:"入社後のキャリアプラン", en:"Your plan after joining", cats:["plan","future"],
+   outline:{ja:"最初の3ヶ月 → 3年後 → 10年後 → そのために今できていること",en:"First 3 months → year 3 → year 10 → what you can already do"}},
+  {k:"strengthweak", ja:"長所と短所", en:"Strengths and weaknesses", cats:["strength","weak"],
+   outline:{ja:"長所と裏付け → 短所を正直に → その対処 → 両方を仕事にどう活かすか",en:"Strength + evidence → honest weakness → how you handle it → how both help at work"}}
+];
+const PAD = {
+  gakuchika:["取り組みの中では、まず現状を数字で把握することから始めました。","途中で方針を変える判断も必要でしたが、目的から逆算して決めました。"],
+  pr:["この強みは、環境が変わっても持ち運べるものだと考えています。","一人で抱えるのではなく、周囲を巻き込む形で成果につなげてきました。"],
+  motive:["説明会や実際のサービスに触れる中で、その印象は具体的なものに変わりました。","働く場所ではなく、何を作る場所なのかで選びたいと考えています。"],
+  fail:["当時は原因を外に求めそうになりましたが、振り返ると自分の準備不足でした。","同じ状況になった時に取れる手が増えたことが、一番の収穫です。"],
+  future:["短期で成果を焦るより、任される範囲を着実に広げたいと考えています。","そのために、今の段階からできる準備は始めています。"],
+  strengthweak:["長所と短所は裏表だと考えていて、どちらも自覚したうえで使い分けたいです。",""]
+};
+function esDraft(item, limit){
+  let gaps = [], out = "";
+  item.cats.forEach(c => { const r = generate(c); out += r.text; gaps = gaps.concat(r.gaps); });
+  const pads = PAD[item.k] || [];
+  let i = 0;
+  while (out.length < limit * 0.82 && i < pads.length) { if (pads[i]) out += pads[i]; i++; }
+  if (out.length > limit) {                       // 文単位で削る（途中で切らない）
+    const sents = out.split(/(?<=。)/); out = "";
+    for (const s of sents) { if ((out + s).length > limit) break; out += s; }
+  }
+  return {text: out, gaps};
+}
+
+/* ===================== 面接ロジック ===================== */
+const S = {level:2,stage:1,qs:[],i:0,mood:100,jabs:0,answers:[],t0:0,buf:"",rec:null,
+           voiceMode:true,listening:false,silenceT:null,hardT:null,firstVoiceAt:0};
+const $ = id => document.getElementById(id);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const L = () => document.body.dataset.lang;
+
+function paintFace(){
+  const st = STAGES[S.stage], m = S.mood;
+  $("tie").setAttribute("fill", st.tie); $("hair").setAttribute("fill", st.hair);
+  $("glasses").style.opacity = st.glasses;
+  const angry = Math.max(0, Math.min(1, (60 - m)/60)), happy = Math.max(0, Math.min(1, (m - 70)/30));
+  $("browL").style.transformOrigin = "139px 107px"; $("browR").style.transformOrigin = "161px 107px";
+  $("browL").style.transform = `translate(${2*angry}px,${6*angry-4*happy}px) rotate(${10*angry-4*happy}deg)`;
+  $("browR").style.transform = `translate(${-2*angry}px,${6*angry-4*happy}px) rotate(${-10*angry+4*happy}deg)`;
+  $("mouth").setAttribute("d", `M130 ${170+3*angry}q20 ${8*happy-12*angry} 40 0`);
+  $("lidL").setAttribute("height", 6*angry); $("lidR").setAttribute("height", 6*angry);
+  $("cheekL").style.opacity = .55*happy; $("cheekR").style.opacity = .55*happy;
+}
+function meter(){
+  S.mood = Math.max(0, Math.min(100, S.mood));
+  $("meterNum").textContent = Math.round(S.mood);
+  $("meterFill").style.width = S.mood + "%";
+  $("meterFill").style.background = S.mood > 60 ? "var(--ok)" : S.mood > 30 ? "var(--warn)" : "var(--accent)";
+  paintFace();
+}
+function hit(d){
+  S.mood += d; meter();
+  if (d < -3){ $("stageEl").classList.remove("flash"); void $("stageEl").offsetWidth; $("stageEl").classList.add("flash"); }
+}
+function speak(text, then, sub){
+  $("qText").innerHTML = text.replace(/</g,"&lt;") + (sub ? `<span class="tr">${sub}</span>` : "");
+  $("face").classList.add("talking");
+  const finish = () => { $("face").classList.remove("talking"); then && then(); };
+  if (!window.speechSynthesis){ setTimeout(finish, 1200 + text.length*90); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ja-JP";
+  u.rate = 0.95 + (S.level-2)*0.06;
+  u.pitch = STAGES[S.stage].pitch - (S.level-2)*0.05;
+  const jv = speechSynthesis.getVoices().find(x => /ja[-_]JP/i.test(x.lang)); if (jv) u.voice = jv;
+  let done = false;
+  u.onend = () => { if (!done){ done = true; finish(); } };
+  u.onerror = u.onend;
+  speechSynthesis.speak(u);
+  setTimeout(() => { if (!done){ done = true; finish(); } }, 1500 + text.length*190);  // onendが来ない環境の保険
+}
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function setupRec(){
+  if (!SR){ S.voiceMode = false; $("typeBox").style.display = "block"; return; }
+  const r = new SR(); r.lang = "ja-JP"; r.continuous = true; r.interimResults = true;
+  r.onresult = e => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++){
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) S.buf += t; else interim += t;
+    }
+    if (!S.firstVoiceAt) S.firstVoiceAt = performance.now();
+    $("aText").innerHTML = "<b>" + (S.buf + interim).replace(/</g,"&lt;") + "</b>";
+    clearTimeout(S.silenceT); S.silenceT = setTimeout(() => finishAnswer(false), 3200);
+  };
+  r.onerror = ev => {
+    if (ev.error === "not-allowed" || ev.error === "service-not-allowed"){
+      S.voiceMode = false; $("typeBox").style.display = "block";
+      $("statusText").textContent = L()==="en" ? "Mic unavailable — switched to typing." : "マイクが使えないのでキーボード入力に切り替えました";
+    }
+  };
+  r.onend = () => { if (S.listening){ try{ r.start(); }catch(e){} } };
+  S.rec = r;
+}
+function listen(){
+  S.buf = ""; S.firstVoiceAt = 0; S.t0 = performance.now();
+  $("aText").innerHTML = `<span style="opacity:.5">${L()==="en"?"(your answer appears here)":"（回答をどうぞ）"}</span>`;
+  $("done").disabled = false;
+  if (S.voiceMode){
+    S.listening = true; $("micDot").classList.add("live");
+    $("statusText").textContent = L()==="en" ? "Listening… (auto-submits 3s after you stop)" : "聞いています…（話し終えて3秒で自動確定）";
+    try{ S.rec.start(); }catch(e){}
+  } else {
+    $("typeIn").value = ""; $("typeIn").focus();
+    $("statusText").textContent = L()==="en" ? 'Type, then press "Done answering".' : "入力して「回答おわり」を押してください";
+  }
+  clearTimeout(S.hardT);
+  S.hardT = setTimeout(() => { if (!S.buf.trim() && !S.firstVoiceAt) finishAnswer(true); }, 12000);
+}
+function stopListen(){
+  S.listening = false; clearTimeout(S.silenceT); clearTimeout(S.hardT);
+  $("micDot").classList.remove("live");
+  if (S.rec){ try{ S.rec.stop(); }catch(e){} }
+}
+function evaluate(text, latency, silent){
+  const len = text.replace(/\s/g,"").length;
+  const fillers = (text.match(FILLER_RE)||[]).length;
+  const concrete = (text.match(CONCRETE_RE)||[]).length;
+  const k = [1.4,1,.7][S.level-1];
+  let d = 0, reason = null;
+  if (silent || len === 0){ d -= 22/k; reason = "silence"; }
+  else {
+    if (len < 40){ d -= 12/k; reason = "short"; } else if (len > 90) d += 5;
+    if (fillers >= 3){ d -= 7/k; reason = reason || "filler"; }
+    if (concrete === 0 && len >= 40){ d -= 6/k; reason = reason || "vague"; } else if (concrete > 0) d += 5;
+    if (latency < 2500) d += 4; else if (latency > 6000) d -= 5/k;
+    if (!reason && S.level === 3 && Math.random() < .45) reason = "push";
+    if (!reason && S.level === 2 && Math.random() < .20) reason = "push";
+  }
+  if (S.level === 1) d = Math.max(d, -8);
+  return {d, reason};
+}
+function askQuestion(){
+  if (S.i >= S.qs.length || S.mood <= 0) return finish(false);
+  $("pillQ").textContent = `Q${S.i+1} / ${S.qs.length}`;
+  S.jabs = 0; $("dummyBox").classList.remove("on");
+  const item = S.qs[S.i];
+  let q = item.ja;
+  if (has("role") && S.i === 0) q = `${v("role")}志望ということですが、${q}`;
+  S.answers.push({q, cat:item.c, text:"", notes:[]});
+  speak(q, listen, item.en);
+}
+function finishAnswer(silent){
+  if (!S.listening && S.voiceMode && !silent && !S.buf) return;
+  stopListen();
+  const text = S.voiceMode ? S.buf.trim() : $("typeIn").value.trim();
+  const latency = (S.firstVoiceAt || performance.now()) - S.t0;
+  const rec = S.answers[S.answers.length-1];
+  rec.text += (rec.text ? " / " : "") + (text || "（無言）");
+  const ev = evaluate(text, latency, silent);
+  $("done").disabled = true; hit(ev.d);
+  if (S.mood <= 0) return speak("……本日は以上です。お引き取りください。", () => finish(true));
+  const maxJab = [0,1,2][S.level-1];
+  if (ev.reason && S.jabs < maxJab){
+    S.jabs++;
+    rec.notes.push(({short:"回答が短い",silence:"沈黙",filler:"言い切れていない",vague:"具体性なし",push:"追撃"})[ev.reason]);
+    speak(pick(JAB[ev.reason]), listen);
+  } else {
+    S.i++;
+    speak((S.level === 1 || ev.d >= 0) ? pick(SOFT) : "……はい、次に行きます。", () => setTimeout(askQuestion, 250));
+  }
+}
+function finish(dropped){
+  stopListen(); if (window.speechSynthesis) speechSynthesis.cancel();
+  $("room").style.display = "none"; $("result").style.display = "flex";
+  const line = [40,55,65][S.level-1], pass = !dropped && S.mood >= line, en = L()==="en";
+  $("verdict").innerHTML = dropped ? `<span style="color:var(--accent)">${en?"Interview cut off":"面接、打ち切り"}</span>`
+    : pass ? `<span style="color:var(--ok)">${en?"Passed":"通過"}</span>` : `<span style="color:var(--accent)">${en?"Rejected":"お祈り"}</span>`;
+  $("verdictNote").textContent = dropped
+    ? (en ? "The impression meter hit zero. Silence and short answers stack up fast." : "心証がゼロになりました。沈黙と短答が積み重なると、この打ち切りが起きます。")
+    : pass ? (en ? `Impression ${Math.round(S.mood)} — you move to the next round.` : `${STAGES[S.stage].who.ja}の心証 ${Math.round(S.mood)} で通過。次の段階に進めます。`)
+           : (en ? `Impression ${Math.round(S.mood)}. You needed ${line}.` : `心証 ${Math.round(S.mood)}。通過ラインは ${line} でした。`);
+  const all = S.answers, txt = all.map(a=>a.text).join("");
+  const avgLen = Math.round(txt.replace(/\s/g,"").length / Math.max(1,all.length));
+  const fillers = (txt.match(FILLER_RE)||[]).length;
+  const concrete = (txt.match(CONCRETE_RE)||[]).length;
+  const jabbed = all.reduce((n,a)=>n+a.notes.length,0);
+  const bars = en
+    ? [["Depth of answers",Math.min(100,avgLen/1.8),`avg ${avgLen} chars`],["Concreteness",Math.min(100,concrete*14),`${concrete} hits`],
+       ["Conviction (few fillers)",Math.max(0,100-fillers*11),`${fillers} fillers`],["Pressure resistance",Math.max(0,100-jabbed*16),`${jabbed} challenges`]]
+    : [["回答の厚み",Math.min(100,avgLen/1.8),`平均 ${avgLen} 文字`],["具体性（数字）",Math.min(100,concrete*14),`${concrete} 箇所`],
+       ["言い切り（フィラーの少なさ）",Math.max(0,100-fillers*11),`フィラー ${fillers} 回`],["圧への耐性",Math.max(0,100-jabbed*16),`突っ込まれ ${jabbed} 回`]];
+  $("bars").innerHTML = bars.map(([l,val,s]) =>
+    `<div class="bar"><div class="lab"><span>${l}</span><span class="num" style="color:var(--sub)">${s}</span></div>
+     <div class="tr"><div class="fl" style="width:${Math.round(val)}%;background:${val>60?'var(--ok)':val>35?'var(--warn)':'var(--accent)'}"></div></div></div>`).join("");
+  $("logBox").innerHTML = all.map(a => {
+    const model = generate(a.cat);
+    return `<div><div class="q">Q. ${a.q}</div><div class="a">A. ${a.text.replace(/</g,"&lt;")}</div>
+      ${a.notes.length?`<div class="n">→ ${a.notes.join(" / ")}</div>`:""}
+      <details style="margin-top:5px"><summary class="hint" style="cursor:pointer">${en?"Model answer from your profile":"あなたの情報で作った模範解答"}</summary>
+      <div class="a" style="margin-top:6px;color:var(--info)">${model.text}</div></details></div>`;
+  }).join("");
+}
+
+/* ===================== UI 配線 ===================== */
+function optGroup(id, key){
+  $(id).addEventListener("click", e => {
+    const b = e.target.closest(".opt"); if (!b) return;
+    [...$(id).children].forEach(c => c.setAttribute("aria-pressed", c === b));
+    S[key] = +b.dataset.v;
+  });
+}
+optGroup("optLevel","level"); optGroup("optStage","stage");
+
+document.querySelector(".langsw").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.body.dataset.lang = b.dataset.lang;
+  [...b.parentNode.children].forEach(c => c.setAttribute("aria-pressed", c === b));
+  renderProfileForm(); fillDqSel(); renderEsChips();
+});
+$("tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  [...$("tabs").children].forEach(c => c.setAttribute("aria-pressed", c === b));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === b.dataset.view));
+});
+
+$("start").addEventListener("click", () => {
+  S.mood = STAGES[S.stage].base; S.i = 0; S.answers = [];
+  const pool = [...Q[S.stage]]; S.qs = [];
+  while (S.qs.length < 5 && pool.length) S.qs.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  const st = STAGES[S.stage], en = L()==="en";
+  $("pillStage").textContent = en ? `${st.en} · ${st.who.en}` : `${st.ja}・${st.who.ja}`;
+  $("setup").style.display = "none"; $("result").style.display = "none"; $("room").style.display = "flex";
+  setupRec(); meter();
+  speak(`本日はお越しいただきありがとうございます。${st.who.ja}の佐倉です。早速ですが始めます。`, () => setTimeout(askQuestion, 300));
+});
+$("done").addEventListener("click", () => finishAnswer(false));
+$("skip").addEventListener("click", () => {
+  stopListen(); hit(-15); S.i++; $("done").disabled = true;
+  speak("……答えられない、ということですね。次に行きます。", () => setTimeout(askQuestion, 250));
+});
+$("helpMe").addEventListener("click", () => {
+  const item = S.qs[S.i]; if (!item) return;
+  const r = generate(item.c);
+  $("dummyText").innerHTML = r.text.replace(/</g,"&lt;") + (r.gaps.length ? `<div class="gaps" style="margin-top:8px">${gapHtml(r.gaps)}</div>` : "");
+  $("dummyBox").classList.add("on");
+});
+$("again").addEventListener("click", () => { $("result").style.display = "none"; $("setup").style.display = "flex"; });
+$("typeIn").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) finishAnswer(false); });
+
+/* プロフィールフォーム */
+function renderProfileForm(){
+  const en = L()==="en";
+  $("pForm").innerHTML = FIELDS.map(f =>
+    `<label class="${f.area?"full":""}"><span class="lb">${en?f.en:f.ja}</span>
+     ${f.area ? `<textarea data-k="${f.k}" placeholder="${f.ph}"></textarea>`
+              : `<input type="text" data-k="${f.k}" placeholder="${f.ph}">`}</label>`).join("");
+  $("pForm").querySelectorAll("[data-k]").forEach(el => {
+    el.value = P[el.dataset.k] || "";
+    el.addEventListener("input", () => { P[el.dataset.k] = el.value; });
+  });
+}
+$("pSave").addEventListener("click", () => {
+  saveProfile();
+  $("pSaved").textContent = L()==="en" ? "Saved to this browser." : "この端末に保存しました。";
+  setTimeout(() => $("pSaved").textContent = "", 2600);
+});
+
+/* ダミータブ */
+function fillDqSel(){
+  const en = L()==="en";
+  $("dqSel").innerHTML = [1,2,3].map(s =>
+    `<optgroup label="${en?STAGES[s].en:STAGES[s].ja}">` +
+    Q[s].map(q => `<option value="${q.c}">${en?q.en:q.ja}</option>`).join("") + `</optgroup>`).join("");
+}
+let dqLast = "";
+$("dqGen").addEventListener("click", () => {
+  const r = generate($("dqSel").value);
+  dqLast = r.text;
+  $("dqOut").textContent = r.text;
+  $("dqGaps").innerHTML = gapHtml(r.gaps);
+  $("dqCount").textContent = `${r.text.length} ${L()==="en"?"chars":"字"}`;
+});
+$("dqSpeak").addEventListener("click", () => { if (dqLast) speak(dqLast, null); });
+$("dqCopy").addEventListener("click", () => dqLast && navigator.clipboard.writeText(dqLast));
+
+/* ESタブ */
+let esSel = ES[0], esLast = "";
+function renderEsChips(){
+  const en = L()==="en";
+  $("esChips").innerHTML = ES.map(x =>
+    `<button class="chip" data-k="${x.k}" aria-pressed="${x === esSel}">${en?x.en:x.ja}</button>`).join("");
+  $("esOutline").textContent = en ? esSel.outline.en : esSel.outline.ja;
+}
+$("esChips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  esSel = ES.find(x => x.k === b.dataset.k); renderEsChips();
+});
+$("esGen").addEventListener("click", () => {
+  const limit = +$("esLen").value, r = esDraft(esSel, limit);
+  esLast = r.text; $("esOut").textContent = r.text;
+  $("esGaps").innerHTML = gapHtml(r.gaps);
+  $("esCount").textContent = `${r.text.length} / ${limit} ${L()==="en"?"chars":"字"}`;
+});
+$("esCopy").addEventListener("click", () => esLast && navigator.clipboard.writeText(esLast));
+
+/* 起動 */
+loadProfile(); renderProfileForm(); fillDqSel(); renderEsChips(); paintFace();
+if (window.speechSynthesis) speechSynthesis.getVoices();
+
+/* --- 自己チェック（?test で実行） --- */
+if (location.search.includes("test")){
+  const bk = JSON.stringify(P);
+  Object.assign(P, {belong:"A大学3年", name:"山田", s1:"巻き込む力", epi:"集客を立て直した", num:"月20人が45人になった", learn:"数字で確かめる", why:"自分が助けられたから", role:"ディレクター"});
+  console.assert(generate("intro").text.includes("A大学3年"), "intro uses profile");
+  console.assert(!generate("intro").text.includes("undefined"), "no undefined");
+  Object.keys(P).forEach(k => delete P[k]);              // 空プロフィール
+  console.assert(generate("weak").gaps.length > 0, "gaps reported when empty");
+  console.assert(esDraft(ES[1], 400).text.length <= 400, "ES respects limit");
+  Object.assign(P, JSON.parse(bk));
+  console.log("self-check done");
+}
+</script>
+</body>
+</html>
