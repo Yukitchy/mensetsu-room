@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>雑談ルーム — 雑談力トレーニング</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+:root{--accent:#E08A2E}   /* 雑談は温かい色。面接ルームの赤と対に */
+.btn{box-shadow:0 6px 18px rgba(224,138,46,.28)}
+.btn:hover{box-shadow:0 12px 26px rgba(224,138,46,.34)}
+.mic.live{background:var(--accent);box-shadow:0 0 0 6px rgba(224,138,46,.16)}
+.subtitle{border-left-color:var(--accent)}
+.tips{display:flex;flex-direction:column;gap:7px;font-size:13.5px}
+.tips b{color:var(--ok)}
+.tips .bad{color:var(--warn)}
+.tag{display:inline-block;font-size:11px;font-weight:800;border-radius:999px;padding:3px 9px;margin:0 5px 5px 0;
+  background:var(--panel2);border:1px solid var(--line);color:var(--sub)}
+.tag.hit{background:color-mix(in srgb,var(--ok) 20%,var(--panel));border-color:var(--ok);color:var(--ink)}
+.desk{display:none}
+</style>
+</head>
+<body data-lang="ja">
+<div class="wrap">
+
+<header>
+  <div class="logo">雑談<span>ルーム</span></div>
+  <a class="btn ghost sm roomlink" href="index.html"><span class="ja">← 面接ルーム</span><span class="en">← Interview Room</span></a>
+  <div class="langsw">
+    <button data-lang="ja" aria-pressed="true">日本語</button>
+    <button data-lang="en" aria-pressed="false">English</button>
+  </div>
+</header>
+
+<section class="view on">
+  <div id="setup" style="display:flex;flex-direction:column;gap:20px">
+    <div>
+      <p class="eyebrow">SMALL TALK ROOM</p>
+      <h1 class="title"><span class="ja">目の前の相手を、<br><b>楽しませろ。</b></span><span class="en">The person in front of you —<br><b>make it fun for them.</b></span></h1>
+      <p class="lead" style="margin-top:10px">
+        <span class="ja">雑談は「面白い話をする力」ではなく、相手の一言を拾って、自分を少し開いて、返す力です。沈黙するほど場の空気は冷えていきます。</span>
+        <span class="en">Small talk is not about being funny. It is picking up what the other person said, opening up a little about yourself, and handing it back. Every silence cools the room.</span>
+      </p>
+    </div>
+
+    <div class="group">
+      <p class="eyebrow"><span class="ja">相手のタイプ</span><span class="en">WHO YOU'RE TALKING TO</span></p>
+      <div class="opts" id="optLevel">
+        <button class="opt" data-v="1"><span class="t"><span class="ja">よく喋る人</span><span class="en">Chatty</span></span>
+          <div class="d"><span class="ja">向こうから広げてくれる。相槌だけでも何とかなる</span><span class="en">They carry it for you. Nodding along is almost enough.</span></div></button>
+        <button class="opt" data-v="2" aria-pressed="true"><span class="t"><span class="ja">ふつうの人</span><span class="en">Average</span></span>
+          <div class="d"><span class="ja">半分ずつ。こちらが黙ると会話も止まる</span><span class="en">Half and half. Go quiet and the talk stops.</span></div></button>
+        <button class="opt" data-v="3"><span class="t"><span class="ja">塩対応の人</span><span class="en">Cold</span></span>
+          <div class="d"><span class="ja">相槌しか返ってこない。全部こちらが広げる必要がある</span><span class="en">You get one-word replies. Everything is on you.</span></div></button>
+      </div>
+    </div>
+
+    <div class="group">
+      <p class="eyebrow"><span class="ja">場面</span><span class="en">SCENE</span></p>
+      <div class="opts" id="optScene">
+        <button class="opt" data-v="1" aria-pressed="true"><span class="t"><span class="ja">交流会で初対面</span><span class="en">Meeting someone new</span></span>
+          <div class="d"><span class="ja">名前しか知らない相手と立ち話</span><span class="en">Standing chat with someone you just met.</span></div></button>
+        <button class="opt" data-v="2"><span class="t"><span class="ja">職場の昼休み</span><span class="en">Lunch break at work</span></span>
+          <div class="d"><span class="ja">同僚と気楽に。距離を縮める場面</span><span class="en">Relaxed talk with a colleague.</span></div></button>
+        <button class="opt" data-v="3"><span class="t"><span class="ja">商談前のアイスブレイク</span><span class="en">Before a business meeting</span></span>
+          <div class="d"><span class="ja">本題に入る前の3分。失礼のない距離感で</span><span class="en">The three minutes before business. Stay polite.</span></div></button>
+      </div>
+    </div>
+
+    <div>
+      <button class="btn" id="start"><span class="ja">話しかけられる</span><span class="en">Let them start</span></button>
+      <p class="hint" style="margin-top:10px">
+        <span class="ja">マイクを使います。Chrome推奨（非対応ブラウザでは自動でキーボード入力に切り替わります）。音声は端末内で処理され、どこにも保存されません。</span>
+        <span class="en">Uses your microphone. Chrome recommended — otherwise it falls back to typing. Nothing is stored anywhere.</span>
+      </p>
+    </div>
+  </div>
+
+  <div id="room" style="display:none;flex-direction:column;gap:13px">
+    <div class="topbar">
+      <span class="pill" id="pillScene">—</span>
+      <span class="pill" id="pillTurn">1 / 6</span>
+      <div class="meterBox">
+        <div class="meterLabel"><span><span class="ja">場の空気</span><span class="en">THE MOOD</span></span><span class="num" id="meterNum">60</span></div>
+        <div class="meterTrack"><div class="meterFill" id="meterFill"></div></div>
+      </div>
+    </div>
+
+    <div class="stage" id="stageEl">
+      <svg class="face" id="face" viewBox="0 0 300 300" aria-label="会話相手">
+        <path d="M150 196c-46 0-84 27-95 66h190c-11-39-49-66-95-66z" id="body" fill="#3C6E71"/>
+        <path d="M150 196l-16 8 16 22 16-22-16-8z" fill="#EDF2F4" opacity=".9"/>
+        <rect x="134" y="176" width="32" height="30" rx="12" fill="#E4B996"/>
+        <ellipse cx="150" cy="126" rx="62" ry="70" fill="#F0C9A4"/>
+        <path id="hair" d="M88 120c0-42 28-66 62-66s62 24 62 66c0-16-8-26-20-30-8 12-24 18-42 18s-34-6-42-18c-12 4-20 14-20 30z" fill="#4A3B2E"/>
+        <ellipse cx="88" cy="130" rx="8" ry="12" fill="#E4B996"/>
+        <ellipse cx="212" cy="130" rx="8" ry="12" fill="#E4B996"/>
+        <g class="brow" id="browL"><rect x="106" y="103" width="32" height="6.4" rx="3.2" fill="#4A3B2E"/></g>
+        <g class="brow" id="browR"><rect x="162" y="103" width="32" height="6.4" rx="3.2" fill="#4A3B2E"/></g>
+        <ellipse cx="122" cy="128" rx="9.5" ry="11" fill="#fff"/>
+        <ellipse cx="178" cy="128" rx="9.5" ry="11" fill="#fff"/>
+        <circle cx="122" cy="129" r="5.4" fill="#2A211B"/>
+        <circle cx="178" cy="129" r="5.4" fill="#2A211B"/>
+        <circle cx="124" cy="126.4" r="1.7" fill="#fff"/>
+        <circle cx="180" cy="126.4" r="1.7" fill="#fff"/>
+        <rect class="eyelid" id="lidL" x="112" y="112" width="21" height="0" fill="#F0C9A4"/>
+        <rect class="eyelid" id="lidR" x="168" y="112" width="21" height="0" fill="#F0C9A4"/>
+        <path d="M150 132v14c0 4-3 6-7 7" stroke="#D9A87F" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+        <path class="mouth" id="mouth" d="M130 170q20 8 40 0" stroke="#8C4A3F" stroke-width="4.6" fill="none" stroke-linecap="round"/>
+        <ellipse id="cheekL" cx="110" cy="152" rx="11" ry="6.5" fill="#EB9B8A" opacity="0"/>
+        <ellipse id="cheekR" cx="190" cy="152" rx="11" ry="6.5" fill="#EB9B8A" opacity="0"/>
+      </svg>
+    </div>
+
+    <div class="subtitle" id="qText">…</div>
+    <div class="you" id="aText"></div>
+    <div class="dummy" id="tipBox"><div class="h"><span class="ja">この一言に使える手</span><span class="en">MOVES YOU CAN USE HERE</span></div><div id="tipText"></div></div>
+
+    <div class="controls">
+      <span class="mic" id="micDot"></span>
+      <span class="hint" id="statusText">—</span>
+      <span style="flex:1"></span>
+      <button class="btn ghost sm" id="helpMe"><span class="ja">返し方のヒント</span><span class="en">Hint</span></button>
+      <button class="btn sm" id="done"><span class="ja">言い終わり</span><span class="en">Done</span></button>
+    </div>
+    <div id="typeBox" style="display:none"><textarea id="typeIn" placeholder="ここに返事を入力して「言い終わり」／ Type your reply"></textarea></div>
+  </div>
+
+  <div id="result" style="display:none;flex-direction:column;gap:16px">
+    <p class="eyebrow">RESULT</p>
+    <h2 class="verdict" id="verdict">—</h2>
+    <p class="lead" id="verdictNote"></p>
+    <div class="card bars" id="bars"></div>
+    <div class="card"><p class="eyebrow" style="margin-bottom:10px"><span class="ja">いちばん効く改善点</span><span class="en">WHAT TO FIX FIRST</span></p>
+      <div class="tips" id="advice"></div></div>
+    <div class="card"><p class="eyebrow" style="margin-bottom:10px"><span class="ja">会話の記録</span><span class="en">TRANSCRIPT</span></p>
+      <div class="log" id="logBox"></div></div>
+    <div><button class="btn" id="again"><span class="ja">もう一度</span><span class="en">Try again</span></button></div>
+  </div>
+</section>
+
+</div>
+<script>
+"use strict";
+/* ============ 話題バンク ============
+   kw = その話題で「拾った」と判定する語。follow = 深掘りの一言。 */
+const SCENES = {
+ 1:{ja:"交流会・初対面",en:"Meeting someone new",body:"#3C6E71",
+   topics:[
+    {t:"はじめまして。今日はどちらから来られたんですか？",kw:["から","住","駅","県","市","近く","電車"],f:"へえ、遠かったんじゃないですか？"},
+    {t:"こういう会、けっこう来られるんですか？私は今日が初めてで、ちょっと緊張してます。",kw:["初め","緊張","慣れ","何回","よく"],f:"意外です。そう見えないですよ。"},
+    {t:"お仕事は何をされてるんですか？",kw:["仕事","会社","働","学生","大学","エンジニア","営業"],f:"面白そうですね。どういうところが大変なんですか？"},
+    {t:"最近ハマってるものとか、ありますか？",kw:["ハマ","好き","趣味","最近","見","やって"],f:"いいですね。それってどうやって始めたんですか？"},
+    {t:"休みの日って、だいたい何されてるんですか？",kw:["休み","週末","家","出かけ","寝"],f:"わかります。私も似た感じかもしれない。"},
+    {t:"実は人の名前を覚えるのが苦手で……何かコツとかあります？",kw:["名前","覚え","苦手","コツ"],f:"なるほど、それ今日から使えますね。"}]},
+ 2:{ja:"職場の昼休み",en:"Lunch break at work",body:"#5B6C8A",
+   topics:[
+    {t:"お昼、いつもどのへんで食べてるんですか？",kw:["昼","食","店","弁当","コンビニ","近く"],f:"いいなあ。おすすめあったら教えてください。"},
+    {t:"そういえば昨日の雨、すごかったですね。大丈夫でした？",kw:["雨","天気","濡れ","傘","大丈夫"],f:"ですよね。傘、意味なかったです。"},
+    {t:"今週なんか忙しそうでしたけど、落ち着きました？",kw:["忙し","仕事","落ち着","案件","締切"],f:"お疲れさまです。ちゃんと休めてます？"},
+    {t:"連休どこか行きます？私はまだノープランで。",kw:["連休","休み","旅行","行","予定","実家"],f:"それいいですね。前から行きたかったんですか？"},
+    {t:"最近なんか面白いドラマとか映画とか見ました？",kw:["ドラマ","映画","見","アニメ","面白","配信"],f:"気になります。どのへんが良かったんですか？"},
+    {t:"コーヒー派ですか？お茶派ですか？",kw:["コーヒー","お茶","飲","カフェ","派"],f:"わかる。私もそっち派です。"}]},
+ 3:{ja:"商談前のアイスブレイク",en:"Before a business meeting",body:"#4B5563",
+   topics:[
+    {t:"本日はありがとうございます。駅から少し分かりにくかったでしょう、迷いませんでした？",kw:["駅","道","迷","近","分かり","地図"],f:"よかったです。うちの者もよく迷うんですよ。"},
+    {t:"この辺りには、よくいらっしゃるんですか？",kw:["この辺","よく","初め","来","近く"],f:"そうなんですね。いい店が多いエリアなんですよ。"},
+    {t:"御社、創業から長いんですよね。何年になるんでしたっけ。",kw:["年","創業","会社","設立","History","歴史"],f:"それは長いですね。続くのが一番難しいのに。"},
+    {t:"今日は暑いですね。この時期、体調崩されてないですか。",kw:["暑","天気","体調","夏","冷房"],f:"ほんとに。無理はよくないですね。"},
+    {t:"出張は多いほうですか？",kw:["出張","移動","新幹線","飛行機","地方"],f:"大変ですね。移動中って何されてるんですか？"},
+    {t:"御社のサービス、実は前から拝見していまして。",kw:["サービス","うち","会社","ありがと","製品"],f:"やはり現場の声は違いますね。参考になります。"}]}
+};
+/* 相手の反応。空気の増減で出し分ける */
+const REACT = {
+  good:["それ、めちゃくちゃ分かります。","へえ、そうなんですね！ちょっと意外でした。","いいですね、その話もっと聞きたいです。","あ、それ気になってたんですよ。"],
+  mid:["なるほど〜。","そうなんですね。","へえ。"],
+  bad:["……そうですか。","……なるほど。","……はい。"],
+  cold:["ええ、まあ。","そうですね。","はい。"]
+};
+const HINTS = {
+  pickup:{ja:"相手が言った言葉を1つ、そのまま自分の返事に入れる（＝聞いてた合図）",en:"Repeat one word they used, verbatim — it signals you were listening."},
+  self:{ja:"「私は」で自分のことを一つ足す。質問だけ返すと尋問になる",en:'Add one thing about yourself starting with "I". Questions alone feel like an interrogation.'},
+  ask:{ja:"最後を質問で終える。相手に球を返さないと会話は続かない",en:"End with a question. If you don't pass the ball back, it stops."},
+  react:{ja:"「わかります」「へえ」など、まず反応してから中身に入る",en:'React first ("I get that", "Huh, really?"), then answer.'},
+  len:{ja:"一言で終えない。事実＋気持ちの2文にすると急に会話らしくなる",en:"Don't stop at one word. Fact + how you felt = two sentences, and it becomes a conversation."}
+};
+const SELF_RE=/(私|僕|俺|自分|うち|わたし)/;
+const ASK_RE=/(？|\?|ですか|ますか|どう|どんな|なんで|なに|何|かな)\s*$/;
+const REACT_RE=/(わかります|分かります|へえ|へー|そうなんです|いいですね|すごい|たしかに|確かに|なるほど)/;
+
+/* ============ 状態 ============ */
+const S={level:2,scene:1,turn:0,max:6,mood:60,mode:"topic",topics:[],cur:null,
+         buf:"",rec:null,voiceMode:true,listening:false,silenceT:null,hardT:null,firstVoiceAt:0,
+         log:[],tally:{pickup:0,self:0,ask:0,react:0,silent:0,short:0}};
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const L=()=>document.body.dataset.lang;
+
+function paintFace(){
+  const m=S.mood;
+  const cold=Math.max(0,Math.min(1,(45-m)/45)), warm=Math.max(0,Math.min(1,(m-55)/45));
+  $("browL").style.transformOrigin="138px 106px"; $("browR").style.transformOrigin="162px 106px";
+  $("browL").style.transform=`translate(0,${4*cold-5*warm}px) rotate(${5*cold-6*warm}deg)`;
+  $("browR").style.transform=`translate(0,${4*cold-5*warm}px) rotate(${-5*cold+6*warm}deg)`;
+  $("mouth").setAttribute("d",`M130 ${170+2*cold}q20 ${13*warm-10*cold} 40 0`);
+  $("lidL").setAttribute("height",7*cold); $("lidR").setAttribute("height",7*cold);
+  $("cheekL").style.opacity=.6*warm; $("cheekR").style.opacity=.6*warm;
+  $("body").setAttribute("fill",SCENES[S.scene].body);
+}
+function meter(){
+  S.mood=Math.max(0,Math.min(100,S.mood));
+  $("meterNum").textContent=Math.round(S.mood);
+  $("meterFill").style.width=S.mood+"%";
+  $("meterFill").style.background=S.mood>65?"var(--ok)":S.mood>35?"var(--warn)":"var(--accent)";
+  paintFace();
+}
+function hit(d){
+  S.mood+=d; meter();
+  if(d<-4){$("stageEl").classList.remove("flash");void $("stageEl").offsetWidth;$("stageEl").classList.add("flash");}
+}
+function speak(text,then){
+  $("qText").textContent=text;
+  $("face").classList.add("talking");
+  const fin=()=>{$("face").classList.remove("talking");then&&then();};
+  if(!window.speechSynthesis){setTimeout(fin,1100+text.length*90);return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="ja-JP"; u.rate=1.02; u.pitch=[1.15,1.05,0.95][S.level-1];
+  const jv=speechSynthesis.getVoices().find(x=>/ja[-_]JP/i.test(x.lang)); if(jv)u.voice=jv;
+  let done=false;
+  u.onend=()=>{if(!done){done=true;fin();}}; u.onerror=u.onend;
+  speechSynthesis.speak(u);
+  setTimeout(()=>{if(!done){done=true;fin();}},1400+text.length*190);
+}
+/* ============ 聞き取り ============ */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function setupRec(){
+  if(!SR){S.voiceMode=false;$("typeBox").style.display="block";return;}
+  const r=new SR(); r.lang="ja-JP"; r.continuous=true; r.interimResults=true;
+  r.onresult=e=>{
+    let it="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal)S.buf+=t; else it+=t;
+    }
+    if(!S.firstVoiceAt)S.firstVoiceAt=performance.now();
+    $("aText").innerHTML="<b>"+(S.buf+it).replace(/</g,"&lt;")+"</b>";
+    clearTimeout(S.silenceT); S.silenceT=setTimeout(()=>reply(false),2800);
+  };
+  r.onerror=ev=>{
+    if(ev.error==="not-allowed"||ev.error==="service-not-allowed"){
+      S.voiceMode=false;$("typeBox").style.display="block";
+      $("statusText").textContent=L()==="en"?"Mic unavailable — switched to typing.":"マイクが使えないのでキーボード入力に切り替えました";
+    }
+  };
+  r.onend=()=>{if(S.listening){try{r.start();}catch(e){}}};
+  S.rec=r;
+}
+function listen(){
+  S.buf="";S.firstVoiceAt=0;
+  $("aText").innerHTML=`<span style="opacity:.5">${L()==="en"?"(your reply appears here)":"（どうぞ、返してください）"}</span>`;
+  $("done").disabled=false;
+  if(S.voiceMode){
+    S.listening=true;$("micDot").classList.add("live");
+    $("statusText").textContent=L()==="en"?"Listening… (auto-submits 3s after you stop)":"聞いています…（話し終えて3秒で自動確定）";
+    try{S.rec.start();}catch(e){}
+  }else{
+    $("typeIn").value="";$("typeIn").focus();
+    $("statusText").textContent=L()==="en"?'Type, then press "Done".':"入力して「言い終わり」を押してください";
+  }
+  clearTimeout(S.hardT);
+  S.hardT=setTimeout(()=>{if(!S.buf.trim()&&!S.firstVoiceAt)reply(true);},11000);
+}
+function stopListen(){
+  S.listening=false;clearTimeout(S.silenceT);clearTimeout(S.hardT);
+  $("micDot").classList.remove("live");
+  if(S.rec){try{S.rec.stop();}catch(e){}}
+}
+/* ============ 採点 ============ */
+function judge(text,silent){
+  const t=text.replace(/\s/g,"");
+  const r={pickup:false,self:false,ask:false,react:false,len:t.length,silent:!!silent||t.length===0};
+  if(r.silent) return r;
+  r.pickup=(S.cur.kw||[]).some(k=>t.includes(k));
+  r.self=SELF_RE.test(t);
+  r.ask=ASK_RE.test(text.trim());
+  r.react=REACT_RE.test(t);
+  return r;
+}
+function score(r){
+  const k=[0.6,1,1.35][S.level-1];        // 塩対応ほど減点が重い
+  if(r.silent) return -20*k;
+  let d=0;
+  if(r.pickup)d+=8; else d-=4*k;
+  if(r.self)d+=6; else d-=2*k;
+  if(r.ask)d+=8;
+  if(r.react)d+=3;
+  if(r.len<15)d-=10*k; else if(r.len>=25&&r.len<=140)d+=4;
+  if(r.ask&&!r.self)d-=3;                 // 質問だけ＝尋問になる
+  if(S.level===1)d=Math.max(d,-6);
+  return d;
+}
+/* ============ 進行 ============ */
+function nextTopic(){
+  if(S.turn>=S.max||S.mood<=0)return finish();
+  S.turn++; $("pillTurn").textContent=`${S.turn} / ${S.max}`;
+  $("tipBox").classList.remove("on");
+  S.mode="topic";
+  S.cur=S.topics[S.turn-1];
+  S.log.push({them:S.cur.t,you:"",marks:[]});
+  speak(S.cur.t,listen);
+}
+function reply(silent){
+  if(!S.listening&&S.voiceMode&&!silent&&!S.buf)return;
+  stopListen();
+  const text=S.voiceMode?S.buf.trim():$("typeIn").value.trim();
+  const r=judge(text,silent), d=score(r);
+  const rec=S.log[S.log.length-1];
+  rec.you+=(rec.you?" / ":"")+(text||"（沈黙）");
+  ["pickup","self","ask","react"].forEach(k=>{if(r[k]){S.tally[k]++;rec.marks.push(k);}});
+  if(r.silent)S.tally.silent++; else if(r.len<15)S.tally.short++;
+  $("done").disabled=true;
+  hit(d - [0,2,5][S.level-1]);            // 塩対応の相手は放っておくと空気が冷える
+  if(S.mood<=0) return speak("……あ、そろそろ戻りますね。ではまた。",()=>finish(true));
+  // 相手の反応 → 深掘り or 次の話題
+  let line;
+  if(S.level===3&&d<8) line=pick(REACT.cold);
+  else if(d>=12) line=pick(REACT.good);
+  else if(d>=0) line=pick(REACT.mid);
+  else line=pick(REACT.bad);
+  const digs = (d>=12&&S.mode==="topic"&&S.cur.f);   // 良い返しの時だけ深掘りが来る＝会話が続いた合図
+  if(digs){
+    S.mode="follow";
+    speak(line+S.cur.f,listen);
+  }else{
+    speak(line,()=>setTimeout(nextTopic,280));
+  }
+}
+/* ============ 結果 ============ */
+function finish(left){
+  stopListen(); if(window.speechSynthesis)speechSynthesis.cancel();
+  $("room").style.display="none"; $("result").style.display="flex";
+  const en=L()==="en", n=Math.max(1,S.log.length), m=Math.round(S.mood);
+  const good=!left&&m>=[50,60,55][S.level-1];
+  $("verdict").innerHTML=left?`<span style="color:var(--accent)">${en?"They walked away":"会話、切り上げられた"}</span>`
+    :good?`<span style="color:var(--ok)">${en?"Good conversation":"いい雑談だった"}</span>`
+         :`<span style="color:var(--warn)">${en?"It got quiet":"気まずくはなかったが、続かなかった"}</span>`;
+  $("verdictNote").textContent=left
+    ?(en?"The mood hit zero. Silence and one-word replies drain it fastest.":"場の空気がゼロになりました。沈黙と一言返しが一番効きます。")
+    :(en?`Mood ended at ${m}.`:`最後の場の空気は ${m} でした。`);
+  const bars=[
+    ["pickup", en?"拾い / Picking up their words":"拾い（相手の言葉を使えたか）", S.tally.pickup/n*100, `${S.tally.pickup}/${n}`],
+    ["self",   en?"Opening up about yourself":"自己開示（自分の話も出せたか）", S.tally.self/n*100, `${S.tally.self}/${n}`],
+    ["ask",    en?"Passing the ball back":"質問返し（相手に球を返せたか）", S.tally.ask/n*100, `${S.tally.ask}/${n}`],
+    ["react",  en?"Reacting first":"リアクション（まず反応できたか）", S.tally.react/n*100, `${S.tally.react}/${n}`],
+    ["len",    en?"Not stopping at one word":"一言で終わらせない", Math.max(0,100-(S.tally.short+S.tally.silent)/n*100), `${en?"short":"短い返し"} ${S.tally.short+S.tally.silent}`]
+  ];
+  $("bars").innerHTML=bars.map(([,l,val,s])=>
+    `<div class="bar"><div class="lab"><span>${l}</span><span class="num" style="color:var(--sub)">${s}</span></div>
+     <div class="tr"><div class="fl" style="width:${Math.round(val)}%;background:${val>60?'var(--ok)':val>35?'var(--warn)':'var(--accent)'}"></div></div></div>`).join("");
+  const worst=bars.slice().sort((a,b)=>a[2]-b[2])[0][0];
+  $("advice").innerHTML=`<div><b>${en?"Start here:":"まずここ："}</b> ${HINTS[worst][en?"en":"ja"]}</div>`+
+    Object.keys(HINTS).filter(k=>k!==worst).map(k=>`<div class="hint">・${HINTS[k][en?"en":"ja"]}</div>`).join("");
+  const LB={pickup:en?"picked up":"拾えた",self:en?"opened up":"自己開示",ask:en?"asked back":"質問返し",react:en?"reacted":"リアクション"};
+  $("logBox").innerHTML=S.log.map(x=>
+    `<div><div class="q">${en?"Them":"相手"}: ${x.them}</div><div class="a">${en?"You":"あなた"}: ${x.you.replace(/</g,"&lt;")}</div>
+     <div style="margin-top:5px">${["pickup","self","ask","react"].map(k=>
+       `<span class="tag ${x.marks.includes(k)?"hit":""}">${LB[k]}</span>`).join("")}</div></div>`).join("");
+}
+/* ============ UI ============ */
+function optGroup(id,key){
+  $(id).addEventListener("click",e=>{
+    const b=e.target.closest(".opt"); if(!b)return;
+    [...$(id).children].forEach(c=>c.setAttribute("aria-pressed",c===b));
+    S[key]=+b.dataset.v;
+  });
+}
+optGroup("optLevel","level"); optGroup("optScene","scene");
+document.querySelector(".langsw").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  document.body.dataset.lang=b.dataset.lang;
+  [...b.parentNode.children].forEach(c=>c.setAttribute("aria-pressed",c===b));
+});
+$("start").addEventListener("click",()=>{
+  S.turn=0; S.log=[]; S.mood=[70,60,45][S.level-1];
+  S.tally={pickup:0,self:0,ask:0,react:0,silent:0,short:0};
+  const pool=[...SCENES[S.scene].topics]; S.topics=[];
+  while(S.topics.length<S.max&&pool.length)S.topics.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  S.max=S.topics.length;
+  $("pillScene").textContent=L()==="en"?SCENES[S.scene].en:SCENES[S.scene].ja;
+  $("setup").style.display="none";$("result").style.display="none";$("room").style.display="flex";
+  setupRec(); meter();
+  speak("あ、どうも。お疲れさまです。",()=>setTimeout(nextTopic,300));
+});
+$("done").addEventListener("click",()=>reply(false));
+$("helpMe").addEventListener("click",()=>{
+  const en=L()==="en", kw=(S.cur&&S.cur.kw||[]).slice(0,3);
+  $("tipText").innerHTML=
+    (kw.length?`<div>${en?"Words you can pick up:":"拾える言葉："} ${kw.map(k=>`<span class="tag hit">${k}</span>`).join("")}</div>`:"")+
+    `<div style="margin-top:6px">${HINTS.self[en?"en":"ja"]}</div><div>${HINTS.ask[en?"en":"ja"]}</div>`;
+  $("tipBox").classList.add("on");
+});
+$("again").addEventListener("click",()=>{$("result").style.display="none";$("setup").style.display="flex";});
+$("typeIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey))reply(false);});
+paintFace();
+if(window.speechSynthesis)speechSynthesis.getVoices();
+
+/* --- 自己チェック（?test） --- */
+if(location.search.includes("test")){
+  S.cur={t:"",kw:["週末"]};
+  const a=judge("私も週末は映画を見てます。おすすめありますか？",false);
+  console.assert(a.pickup&&a.self&&a.ask,"good reply detected");
+  console.assert(score(a)>12,"good reply scores high: "+score(a));
+  const b=judge("はい。",false);
+  console.assert(!b.pickup&&score(b)<0,"one-word reply penalised: "+score(b));
+  console.assert(score(judge("",true))<-10,"silence penalised");
+  console.log("self-check done");
+}
+</script>
+</body>
+</html>
